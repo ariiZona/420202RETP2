@@ -31,12 +31,13 @@ Les expressions postfixe permettent d'évaluer le résultat en respectant les pr
 
 Des fonctions spéciales permettent de passer d'un entier à un tableau de caractères et vice-versa :
 
+~~~cpp
 int entier;
-char tabCaracteres\[10\];
+char tabCaracteres[10];
 
-entier = atoi(tabCaracteres);  _// Conversion d'un entier vers un tableau de caractères._
-sprintf(tabCaracteres, "%i", entier);  _// Conversion d'un tableau de caractères vers un entier._
-
+entier = atoi(tabCaracteres);  // Conversion d'un entier vers un tableau de caractères.
+sprintf(tabCaracteres, "%i", entier);  // Conversion d'un tableau de caractères vers un entier.
+~~~
 
 _\* Sous Windows, « \_s » doit être ajouté à « sprintf »._
 
@@ -48,6 +49,5 @@ Infix : 1+2\*(5+10)+11
 Postfix : 12510+\*+11+
 Evaluation : 42
 
-_\* Les expressions utilisées seront toujours valides.
-\*\* Les opérandes utilisées seront toujours positives.
-_
+_\* Les expressions utilisées seront toujours valides._
+_\*\* Les opérandes utilisées seront toujours positives._
