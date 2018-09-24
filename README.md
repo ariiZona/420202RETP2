@@ -6,8 +6,11 @@ Une expression arithmétique est composée d'opérandes et d'opérateurs exprim�
 #### Priorités
 
 0\. ( et )
+
 1\. + et -
+
 2\. \*, / et %
+
 
 #### Infixe à Postfixe
 
