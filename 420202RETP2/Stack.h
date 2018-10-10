@@ -21,12 +21,12 @@ public:
 	}
 
 	void push(T data) {
-		sp = new SLNode<T>(data, SP);
+		sp = new SLNode<T>(data, sp);
 		count++;
 	}
 
 	void pop() {
-		if (SP != nullptr) {
+		if (sp != nullptr) {
 			SLNode<T>* toDelete = sp;
 			sp = sp->next;
 			delete toDelete;
@@ -35,8 +35,8 @@ public:
 	}
 
 	T top() {
-		if (SP) {
-			return SP->data;
+		if (sp) {
+			return sp->data;
 		}
 		return NULL;
 	}

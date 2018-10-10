@@ -21,6 +21,12 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Queue.h" />
+    <ClInclude Include="SLIterator.h" />
+    <ClInclude Include="SLNode.h" />
+    <ClInclude Include="Stack.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{F74767EA-825D-4FE6-8A23-027505EB936A}</ProjectGuid>
