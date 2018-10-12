@@ -6,8 +6,8 @@
 #include "Queue.h"
 
 #define PARENTHESIS 0
-#define OPERATOR 1
-#define OPERAND 2
+#define OPERATOR1 1
+#define OPERATOR2 2
 
 #define ADDITION 1
 #define SUBSTRACTION 2
@@ -29,21 +29,21 @@ unsigned int getPriority(const char* operateur) {
 	}
 }
 
-unsigned int getType(const char* operator) {
+unsigned int getType(const char* operateur) {
 	//TODO changer a opérateurs uniquement
-	if (operator == "+") {
+	if (operateur == "+") {
 		return ADDITION;
 	}
-	else if (operator == "-") {
+	else if (operateur == "-") {
 		return SUBSTRACTION;
 	}
-	else if (operator == "*") {
+	else if (operateur == "*") {
 		return MULTIPLICATION;
 	}
-	else if (operator == "/") {
+	else if (operateur == "/") {
 		return DIVISION;
 	}
-	else if (operator == "%") {
+	else if (operateur == "%") {
 		return MODULO;
 	}
 }
@@ -75,19 +75,21 @@ int main() {
 	infixExpressionQueue->push("+");
 	infixExpressionQueue->push("11");
 
-	SLIterator<const char*>* infixIterator = infixExpressionQueue->begin();
+	SLIterator<const char*>* iterateur = infixExpressionQueue->begin();
 
-	cout << "Infix : ";
+	std::cout << "Infix : ";
 	for (unsigned int i = 0; i < infixExpressionQueue->size(); i++) {
-		cout << infixIterator->getData();
-		infixIterator->goNext();
+		std::cout << iterateur->getData();
+		iterateur->goNext();
 	}
+	//On le supprime maintenant pour ne pas l'oublier
+	delete iterateur;
 
-	cout << endl;
+	std::cout << endl;
 
 	// TODO : Infixe à postfixe...
 	while (infixExpressionQueue->size() > 0) {
-		if (infixExpressionQueue->front() != ("-" && "+" && "(" && ")" && "/" && "%")) {
+		if (infixExpressionQueue->front() != "(" && infixExpressionQueue->front() != ")" && infixExpressionQueue->front() != "+" && infixExpressionQueue->front() != "-" && infixExpressionQueue->front() != "*" && infixExpressionQueue->front() != "/" && infixExpressionQueue->front() != "%") {
 			postfixExpressionQueue->push(infixExpressionQueue->front());
 			infixExpressionQueue->pop();
 		}
@@ -95,28 +97,113 @@ int main() {
 			operandStack->push(infixExpressionQueue->front());
 			infixExpressionQueue->pop();
 		}
-		else if (infixExpressionQueue->front() == ")" {
-			infixExpressionQueue->pop(); //TODO: vérifier this shit
+		else if (infixExpressionQueue->front() == ")") {
+			infixExpressionQueue->pop();
 			while (operandStack->top() != "(" && operandStack->size() > 0) {
 				postfixExpressionQueue->push(operandStack->top());
 				operandStack->pop();
 			}
-			operandStack->pop()
+			operandStack->pop();
 		}
 		else {
+			priority = getPriority(infixExpressionQueue->front());
 
+
+			switch (priority) {
+				//"+" || "+"
+			case 1:
+
+				//Boucler until empty stack ou que la valeur au top soit "("
+				while (operandStack->size() && getPriority(operandStack->top()) >= OPERATOR1) {
+					postfixExpressionQueue->push(operandStack->top());
+					operandStack->pop();
+				}
+				operandStack->push(infixExpressionQueue->front());
+				break;
+				//"*" || "/" || "%"
+			case 2:
+
+				//Boucle jusqu'� ce que la pile soit vide ou que la valeur sur le dessus de la pile soit une paranth�se ouvrante, un plus ou un moins
+				while (operandStack->size() && getPriority(operandStack->top()) >= OPERATOR2) {
+					postfixExpressionQueue->push(operandStack->top());
+					operandStack->pop();
+				}
+			
+					operandStack->push(infixExpressionQueue->front());
+				break;
+			}
+			infixExpressionQueue->pop();
 		}
 	}
 
-	cout << "Postfix : ";
-	// TODO : Afficher l'expression postfixe...
-	cout << endl;
+	//Vider la pile
+	for (unsigned int i = 0; i <= operandStack->size(); i++) {
+		postfixExpressionQueue->push(operandStack->top());
+		operandStack->pop();
+	}
+	delete infixExpressionQueue;
+
+	std::cout << "Postfix : ";
+	//Afficher l'expression postfixe
+	iterateur = postfixExpressionQueue->begin();
+	for (unsigned int i = 0; i < postfixExpressionQueue->size(); i++) {
+		cout << iterateur->getData();
+		iterateur->goNext();
+	}
+	delete iterateur;
+
+	std::cout << endl;
 
 	// TODO : Postfixe à résultat...
+	while (postfixExpressionQueue->size()) {
+		// V�rifie si le caract�re est un op�rande
+		if (postfixExpressionQueue->front() != "+" && postfixExpressionQueue->front() != "-" && postfixExpressionQueue->front() != "*" && postfixExpressionQueue->front() != "/" && postfixExpressionQueue->front() != "%") {
+			operandStack->push(postfixExpressionQueue->front());
+		}
+		// Caract�re est un op�rateur
+		else {
+			type = getType(postfixExpressionQueue->front());
+			entier2 = atoi(operandStack->top());
+			operandStack->pop();
+			entier1 = atoi(operandStack->top());
+			operandStack->pop();
 
-	cout << "Evaluation : ";
+			// 
+			switch (type) {
+				// Addition
+			case ADDITION:
+				resultat = entier1 + entier2;
+				break;
+				// Soustraction
+			case SUBSTRACTION:
+				resultat = entier1 - entier2;
+				break;
+				// Multiplication
+			case MULTIPLICATION:
+				resultat = entier1 * entier2;
+				break;
+				// Division
+			case DIVISION:
+				resultat = entier1 / entier2;
+				break;
+				// Modulo
+			case MODULO:
+				resultat = entier1 % entier2;
+				break;
+			}
+			sprintf_s(tabCaracteres, "%i", resultat);
+			operandStack->push(tabCaracteres);
+		}
+		postfixExpressionQueue->pop();
+	}
+	delete postfixExpressionQueue;
+
+	std::cout << "Evaluation : ";
 	// TODO : Afficher le résultat...
-	cout << endl;
+	
+	std::cout << operandStack->top();
+	std::cout << endl;
+	delete operandStack;
 
 	getchar();
 	return 0;
